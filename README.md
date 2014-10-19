@@ -1,7 +1,7 @@
 injecting-validator
 ===================
 
-A method annotation based (contrast with bean annotation) validator inspired by JUnit
+A method annotation (contrast with bean annotation) based validator inspired by JUnit
 
 
 ````java
