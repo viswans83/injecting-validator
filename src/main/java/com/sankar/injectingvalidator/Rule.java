@@ -1,4 +1,4 @@
-package com.sankar.guicevalidator;
+package com.sankar.injectingvalidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,6 +7,6 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface FailureMethod {
-	
+public @interface Rule {
+	String value();
 }

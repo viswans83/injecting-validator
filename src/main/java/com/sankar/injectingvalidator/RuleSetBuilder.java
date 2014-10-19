@@ -1,4 +1,4 @@
-package com.sankar.guicevalidator;
+package com.sankar.injectingvalidator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -74,13 +74,13 @@ public class RuleSetBuilder {
 
 	private void ensureValidResultParameterAnnotations(Annotation[] parameterAnnotations) {
 		for(Annotation a : parameterAnnotations)
-			if (a.equals(Path.class) || a.equals(Optional.class))
+			if (Path.class.equals(a.annotationType()) || Optional.class.equals(a.annotationType()))
 				fail("Result parameter annotated with @Path");
 	}
 	
 	private void ensureValidRuleParameterAnnotations(Annotation[] parameterAnnotations) {
 		for(Annotation a : parameterAnnotations)
-			if (a.equals(Path.class))
+			if (Path.class.equals(a.annotationType()))
 				return;
 		
 		fail("Rule parameters should be annotated with @Path");
@@ -88,7 +88,7 @@ public class RuleSetBuilder {
 
 	private Path getPathAnnotation(Annotation[] annotationsOnParamter) {
 		for(Annotation ann : annotationsOnParamter) {
-			if (ann.annotationType().equals(Path.class))
+			if (Path.class.equals(ann.annotationType()))
 				return (Path)ann;
 		}
 		
@@ -97,7 +97,7 @@ public class RuleSetBuilder {
 	
 	private boolean isOptional(Annotation[] annotationsOnParamter) {
 		for(Annotation annotation : annotationsOnParamter) {
-			if (annotation.annotationType().equals(Optional.class))
+			if (Optional.class.equals(annotation.annotationType()))
 				return true;
 		}
 		
@@ -105,7 +105,7 @@ public class RuleSetBuilder {
 	}
 	
 	private static void fail(String reason) {
-		throw new IllegalArgumentException(reason);
+		throw new RuleDefinitionError(reason);
 	}
 	
 	private static void fail(String format, Object... args) {
@@ -185,7 +185,7 @@ public class RuleSetBuilder {
 				fail("Multiple result parameters found in ruleId: %s", classScan.getCurrentRuleId());
 			
 			else
-				addRuleParameter(RuleParameter.RESULT);
+				addRuleParameter(RuleParameter.RESULT_OBJECT);
 			
 			resultParameterFound = true;
 		}

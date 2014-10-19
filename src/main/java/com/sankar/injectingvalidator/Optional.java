@@ -1,4 +1,4 @@
-package com.sankar.guicevalidator;
+package com.sankar.injectingvalidator;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
