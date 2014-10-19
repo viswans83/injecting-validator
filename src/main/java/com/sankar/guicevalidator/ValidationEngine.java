@@ -84,7 +84,7 @@ public class ValidationEngine<H extends RuleFailureHandler<R>, R> {
 			for(int i = 0; i < types.length; i++) {
 				Path path = null;
 				
-				if (Result.class.isAssignableFrom(types[i]))
+				if (Result.class.equals(types[i]))
 					resultObjectIndex = i;
 				
 				else if ((path = getPath(annotations[i])) != null) {
