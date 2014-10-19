@@ -54,6 +54,19 @@ public class ValidatorTest {
 		validator.runRules(dependencyResolver, valueResolver, results);
 	}
 	
+	@Test
+	public void test_custom_ruleId() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		Object object = new Object();
+		
+		ValueResolver valueResolver = createValueResolver(object, false);
+		
+		Validator validator = new Validator(testruleSet);
+		validator.runRules(dependencyResolver, valueResolver, results);
+		
+		Assert.assertEquals(1, results.failureCount());
+		Assert.assertTrue(results.gotFailure("rule_without_id"));
+	}
+	
 	private DependencyResolver createDependencyResolver() {
 		
 		return new DependencyResolver() {
@@ -96,6 +109,11 @@ class TestRules {
 	@Rule("generic_type")
 	public void test_rule(@Path("test") List<String> names, Result result) {
 		
+	}
+	
+	@Rule
+	public void test_rule_without_ruleId(Result result) {
+		result.failRule("rule_without_id","Custom RuleId message");
 	}
 	
 }

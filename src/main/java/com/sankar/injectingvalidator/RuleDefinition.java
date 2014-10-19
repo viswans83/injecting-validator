@@ -51,6 +51,11 @@ class RuleDefinition {
 			public void fail(String message, Object... args) {
 				handler.failed(ruleId, message, args);
 			}
+			
+			@Override
+			public void failRule(String ruleId, String message, Object... args) {
+				handler.failed(ruleId, message, args);
+			}
 		};
 	}
 	
