@@ -18,8 +18,8 @@ import com.sankar.injectingvalidator.helpers.ValidationResultHolder;
 
 public class ValidatorTest {
 	
-	RuleSet personruleSet = RuleSet.from(PersonRules.class);
-	RuleSet testruleSet = RuleSet.from(TestRules.class);
+	RuleSet personruleSet = RuleSet.from(PersonRules.class).build();
+	RuleSet testruleSet = RuleSet.from(TestRules.class).build();
 	
 	ValidationResultHolder results = new ValidationResultHolder();
 	DependencyResolver dependencyResolver = createDependencyResolver();

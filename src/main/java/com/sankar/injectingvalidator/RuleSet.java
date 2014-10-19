@@ -13,8 +13,8 @@ public class RuleSet {
 		this.rules = rules;
 	}
 	
-	public static RuleSet from(Class<?> clazz) {
-		return new RuleSetBuilder().scan(clazz).build();
+	public static UnfinishedRuleSetBuilder from(Class<?> clazz) {
+		return new RuleSetBuilder().scan(clazz);
 	}
 	
 	void execute(DependencyResolver dependencyResolver, ValueResolver valueResolver, RuleFailureHandler handler) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, UnmatchedTypeException {
