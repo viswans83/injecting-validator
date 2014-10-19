@@ -2,6 +2,7 @@ package com.sankar.injectingvalidator;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -44,10 +45,12 @@ public class RuleSetBuilder {
 	
 	private void scanMethod(Method m, MethodScan methodScan) {
 		Class<?>[] parameterTypes = m.getParameterTypes();
+		Type[] genericParameterTypes = m.getGenericParameterTypes();
 		Annotation[][] annotations = m.getParameterAnnotations();
 		
 		for(int i = 0; i < parameterTypes.length; i++) {
 			Class<?> parameterType = parameterTypes[i];
+			Type genericParameterType = genericParameterTypes[i];
 			Annotation[] parameterAnnotations = annotations[i];
 			
 			if (Result.class.equals(parameterType)) {
@@ -61,7 +64,7 @@ public class RuleSetBuilder {
 				Path path = getPathAnnotation(parameterAnnotations);
 				boolean optional = isOptional(parameterAnnotations);
 				
-				methodScan.ruleParameterFound(path.value(), parameterType, optional);
+				methodScan.ruleParameterFound(path.value(), parameterType, genericParameterType, optional);
 			}
 		}
 		
@@ -169,7 +172,7 @@ public class RuleSetBuilder {
 			this.method = m;
 		}
 		
-		public void ruleParameterFound(String path, Class<?> type, boolean optional) {
+		public void ruleParameterFound(String path, Class<?> type, Type genericType, boolean optional) {
 			if (path.trim().length() == 0)
 				fail("Invalid access path [%s] found in ruleId [%s]", path, classScan.getCurrentRuleId());
 			
@@ -177,7 +180,7 @@ public class RuleSetBuilder {
 				fail("Duplicate access path [%s] found in ruleId [%s]", path, classScan.getCurrentRuleId());
 			
 			else
-				addRuleParameter(path, type, optional);
+				addRuleParameter(path, type, genericType, optional);
 		}
 		
 		public void resultParameterFound() {
@@ -198,8 +201,8 @@ public class RuleSetBuilder {
 				fail("ruleId [%s] is missing a Result parameter", classScan.getCurrentRuleId());
 		}
 		
-		private void addRuleParameter(String path, Class<?> type, boolean optional) {
-			addParameter(new RuleParameter(path, type, optional));
+		private void addRuleParameter(String path, Class<?> type, Type genericType, boolean optional) {
+			addParameter(new RuleParameter(path, type, genericType, optional));
 		}
 		
 		private void addParameter(Parameter parameter) {

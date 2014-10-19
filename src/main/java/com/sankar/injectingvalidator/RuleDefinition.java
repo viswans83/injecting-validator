@@ -27,11 +27,11 @@ class RuleDefinition {
 		return parameters[parameterIndex].isResultParameter();
 	}
 	
-	void execute(Object instance, ValueResolver valueResolver, RuleFailureHandler handler) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, MissingValueException {
+	void execute(Object instance, ValueResolver valueResolver, RuleFailureHandler handler) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, MissingValueException, UnmatchedTypeException {
 		method.invoke(instance, buildArguments(valueResolver, handler));
 	}
 	
-	private Object[] buildArguments(ValueResolver valueResolver, RuleFailureHandler handler) throws MissingValueException {
+	private Object[] buildArguments(ValueResolver valueResolver, RuleFailureHandler handler) throws MissingValueException, UnmatchedTypeException {
 		Object[] args = new Object[parameterCount()];
 		
 		for(int i = 0; i < parameterCount(); i++)
@@ -41,7 +41,7 @@ class RuleDefinition {
 		return args;
 	}
 
-	private Object resolveParameter(int i, ValueResolver valueResolver) throws MissingValueException {
+	private Object resolveParameter(int i, ValueResolver valueResolver) throws MissingValueException, UnmatchedTypeException {
 		return parameters[i].resolve(valueResolver);
 	}
 

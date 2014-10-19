@@ -1,6 +1,9 @@
 package com.sankar.injectingvalidator;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.junit.Assert;
@@ -15,23 +18,40 @@ import com.sankar.injectingvalidator.helpers.ValidationResultHolder;
 
 public class ValidatorTest {
 	
+	RuleSet personruleSet = RuleSet.from(PersonRules.class);
+	RuleSet testruleSet = RuleSet.from(TestRules.class);
+	
+	ValidationResultHolder results = new ValidationResultHolder();
+	DependencyResolver dependencyResolver = createDependencyResolver();
+	
 	@Test
 	public void validates_correctly() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Person person = new Person();
 		person.setName("Sankaranarayanan Viswanathan Narayanaswamy");
-			
-		RuleSet ruleSet = RuleSet.from(PersonRules.class);
-		Validator validator = new Validator(ruleSet);
 		
-		ValidationResultHolder results = new ValidationResultHolder();
-		DependencyResolver dependencyResolver = createDependencyResolver();
-		ValueResolver valueResolver = createValueResolver(person);
+		List<String> otherNames = Arrays.asList("Sankar", "Shankar", "Sankar V", "Sankaranarayanan Viswanathan Narayanaswamy");
+		person.setAlternateNames(otherNames);
 		
+		ValueResolver valueResolver = createValueResolver(person, false);
+		
+		Validator validator = new Validator(personruleSet);
 		validator.runRules(dependencyResolver, valueResolver, results);
 		
-		Assert.assertEquals(2, results.failureCount());
+		Assert.assertEquals(4, results.failureCount());
 		Assert.assertTrue(results.gotFailure("ssn_required"));
 		Assert.assertTrue(results.gotFailure("name_length"));
+		Assert.assertTrue(results.gotFailure("max_alternate_names"));
+		Assert.assertTrue(results.gotFailure("alternate_names_not_different"));
+	}
+	
+	@Test(expected = ValidationExecutionException.class)
+	public void test_UnmatchedTypeException() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		Object object = new Object();
+		
+		ValueResolver valueResolver = createValueResolver(object, true);
+		
+		Validator validator = new Validator(testruleSet);
+		validator.runRules(dependencyResolver, valueResolver, results);
 	}
 	
 	private DependencyResolver createDependencyResolver() {
@@ -48,14 +68,19 @@ public class ValidatorTest {
 		};
 	}
 	
-	private ValueResolver createValueResolver(final Object context) {
+	private ValueResolver createValueResolver(final Object context, final boolean throwUnmatchedTypeException) {
 		
 		return new ValueResolver() {
 
 			@Override
-			public Object lookup(String path) {
+			public Object lookup(String path, Class<?> type, Type genericType) throws UnmatchedTypeException {
 				try {
-					return PropertyUtils.getNestedProperty(context, path);
+					if (throwUnmatchedTypeException)
+						throw new UnmatchedTypeException(path, genericType);
+					
+					else
+						return PropertyUtils.getNestedProperty(context, path);
+					
 				} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 					return null;
 				}
@@ -64,4 +89,13 @@ public class ValidatorTest {
 		};
 	}
 
-} 
+}
+
+class TestRules {
+	
+	@Rule("generic_type")
+	public void test_rule(@Path("test") List<String> names, Result result) {
+		
+	}
+	
+}

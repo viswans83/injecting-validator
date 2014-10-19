@@ -1,5 +1,7 @@
 package com.sankar.injectingvalidator.helpers;
 
+import java.util.List;
+
 import com.google.inject.Inject;
 import com.sankar.injectingvalidator.Optional;
 import com.sankar.injectingvalidator.Path;
@@ -43,6 +45,19 @@ public class PersonRules {
 	public void validate_name_length(@Path("name") String name, Result result) {
 		if (name.length() > 25)
 			result.fail("Name is too long");
+	}
+	
+	@Rule("alternate_names_not_different")
+	public void validate_alternate_names(@Path("name") String givenName, @Path("alternateNames") @Optional List<String> names, Result result) {
+		if (names != null && names.size() > 0)
+			if (names.contains(givenName))
+				result.fail("Alternate names should differ from given name");
+	}
+	
+	@Rule("max_alternate_names")
+	public void validate_max_alternate_names(@Path("alternateNames") List<String> names, Result result) {
+		if (names.size() > 2)
+			result.fail("Only {0} alternate names can be provided", 2);
 	}
 
 }

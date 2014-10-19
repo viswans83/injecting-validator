@@ -17,14 +17,14 @@ public class RuleSet {
 		return new RuleSetBuilder().scan(clazz).build();
 	}
 	
-	void execute(DependencyResolver dependencyResolver, ValueResolver valueResolver, RuleFailureHandler handler) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+	void execute(DependencyResolver dependencyResolver, ValueResolver valueResolver, RuleFailureHandler handler) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, UnmatchedTypeException {
 		
 		Object instance = dependencyResolver.resolve(ruleClass);
 		
 		for(RuleDefinition rule : rules) {
 			try {
 				rule.execute(instance, valueResolver, handler);
-			} catch (MissingValueException e) {
+			} catch (MissingValueException ex) {
 				// Skip rules that cannot execute due to non @Optional parameters 
 			}
 		}

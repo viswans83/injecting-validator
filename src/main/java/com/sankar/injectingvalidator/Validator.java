@@ -13,8 +13,8 @@ public class Validator {
 	public void runRules(DependencyResolver dependencyResolver, ValueResolver valueResolver, RuleFailureHandler handler) {
 		try {
 			ruleSet.execute(dependencyResolver, valueResolver, handler);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new ExecutionError(e);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | UnmatchedTypeException e) {
+			throw new ValidationExecutionException(e);
 		}
 	}
 
