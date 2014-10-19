@@ -22,7 +22,11 @@ public class RuleSet {
 		Object instance = dependencyResolver.resolve(ruleClass);
 		
 		for(RuleDefinition rule : rules) {
-			rule.execute(instance, valueResolver, handler);
+			try {
+				rule.execute(instance, valueResolver, handler);
+			} catch (MissingValueException e) {
+				// Skip rules that cannot execute due to non @Optional parameters 
+			}
 		}
 	}
 	

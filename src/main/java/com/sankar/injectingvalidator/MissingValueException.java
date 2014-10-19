@@ -1,7 +1,7 @@
 package com.sankar.injectingvalidator;
 
 @SuppressWarnings("serial")
-public class MissingValueException extends RuntimeException {
+public class MissingValueException extends Exception {
 	
 	private final String path;
 	

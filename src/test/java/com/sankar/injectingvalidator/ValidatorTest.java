@@ -19,7 +19,6 @@ public class ValidatorTest {
 	public void validates_correctly() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Person person = new Person();
 		person.setName("Sankaranarayanan Viswanathan Narayanaswamy");
-		person.setSsn("1234");
 			
 		RuleSet ruleSet = RuleSet.from(PersonRules.class);
 		Validator validator = new Validator(ruleSet);
@@ -30,9 +29,8 @@ public class ValidatorTest {
 		
 		validator.runRules(dependencyResolver, valueResolver, results);
 		
-		Assert.assertEquals(3, results.failureCount());
-		Assert.assertTrue(results.gotFailure("ssn_length"));
-		Assert.assertTrue(results.gotFailure("ssn_unique"));
+		Assert.assertEquals(2, results.failureCount());
+		Assert.assertTrue(results.gotFailure("ssn_required"));
 		Assert.assertTrue(results.gotFailure("name_length"));
 	}
 	

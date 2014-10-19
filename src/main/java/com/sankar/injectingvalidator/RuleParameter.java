@@ -18,7 +18,7 @@ class RuleParameter {
 		return Result.class.equals(type);
 	}
 	
-	Object resolve(ValueResolver valueResolver) {
+	Object resolve(ValueResolver valueResolver) throws MissingValueException {
 		if (isResultHolder())
 			throw new AssertionError();
 		
