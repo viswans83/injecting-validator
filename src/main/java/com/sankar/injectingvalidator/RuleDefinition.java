@@ -6,10 +6,10 @@ import java.lang.reflect.Method;
 class RuleDefinition {
 	
 	private final String ruleId;
-	private final RuleParameter[] parameters;
+	private final Parameter[] parameters;
 	private final Method method;
 	
-	public RuleDefinition(String ruleId, RuleParameter[] parameters, Method method) {
+	public RuleDefinition(String ruleId, Parameter[] parameters, Method method) {
 		this.ruleId = ruleId;
 		this.parameters = parameters;
 		this.method = method;
@@ -23,8 +23,8 @@ class RuleDefinition {
 		return parameters.length;
 	}
 	
-	private boolean isResultHolder(int parameterIndex) {
-		return parameters[parameterIndex].isResultHolder();
+	private boolean isResultParameter(int parameterIndex) {
+		return parameters[parameterIndex].isResultParameter();
 	}
 	
 	void execute(Object instance, ValueResolver valueResolver, RuleFailureHandler handler) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, MissingValueException {
@@ -35,7 +35,7 @@ class RuleDefinition {
 		Object[] args = new Object[parameterCount()];
 		
 		for(int i = 0; i < parameterCount(); i++)
-			args[i] = isResultHolder(i) ? 
+			args[i] = isResultParameter(i) ? 
 					buildResultProxy(handler) : resolveParameter(i, valueResolver);
 		
 		return args;

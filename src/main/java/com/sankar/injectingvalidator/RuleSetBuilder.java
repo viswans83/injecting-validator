@@ -75,7 +75,7 @@ public class RuleSetBuilder {
 	private void ensureValidResultParameterAnnotations(Annotation[] parameterAnnotations) {
 		for(Annotation a : parameterAnnotations)
 			if (Path.class.equals(a.annotationType()) || Optional.class.equals(a.annotationType()))
-				fail("Result parameter annotated with @Path");
+				fail("Result parameter annotated with @Path or @Optional");
 	}
 	
 	private void ensureValidRuleParameterAnnotations(Annotation[] parameterAnnotations) {
@@ -143,11 +143,11 @@ public class RuleSetBuilder {
 			RuleSetBuilder.this.rules = scannedRules;
 		}
 		
-		public void buildCurrentRule(RuleParameter[] parameters, Method method) {
+		public void buildCurrentRule(Parameter[] parameters, Method method) {
 			addRule(currentRuleId, parameters, method);
 		}
 		
-		private void addRule(String ruleId, RuleParameter[] parameters, Method method) {
+		private void addRule(String ruleId, Parameter[] parameters, Method method) {
 			scannedRules.add(new RuleDefinition(ruleId, parameters, method));
 		}
 		
@@ -159,7 +159,7 @@ public class RuleSetBuilder {
 		private ClassScan classScan;
 		private Method method;
 		
-		private List<RuleParameter> parameters = new ArrayList<>();
+		private List<Parameter> parameters = new ArrayList<>();
 		
 		private boolean resultParameterFound;
 		private Set<String> accessPathSet = new HashSet<>();
@@ -185,25 +185,25 @@ public class RuleSetBuilder {
 				fail("Multiple result parameters found in ruleId: %s", classScan.getCurrentRuleId());
 			
 			else
-				addRuleParameter(RuleParameter.RESULT_OBJECT);
+				addParameter(ResultParameter.INSTANCE);
 			
 			resultParameterFound = true;
 		}
 		
 		public void complete() {
 			if (resultParameterFound)
-				classScan.buildCurrentRule(parameters.toArray(new RuleParameter[0]), method);
+				classScan.buildCurrentRule(parameters.toArray(new Parameter[0]), method);
 			
 			else
 				fail("ruleId [%s] is missing a Result parameter", classScan.getCurrentRuleId());
 		}
 		
 		private void addRuleParameter(String path, Class<?> type, boolean optional) {
-			addRuleParameter(new RuleParameter(path, type, optional));
+			addParameter(new RuleParameter(path, type, optional));
 		}
 		
-		private void addRuleParameter(RuleParameter ruleParameter) {
-			parameters.add(ruleParameter);
+		private void addParameter(Parameter parameter) {
+			parameters.add(parameter);
 		}
 		
 	}

@@ -1,8 +1,6 @@
 package com.sankar.injectingvalidator;
 
-class RuleParameter {
-	
-	static final RuleParameter RESULT_OBJECT = new RuleParameter(null, Result.class, false);
+class RuleParameter implements Parameter {
 	
 	private final String accessPath;
 	private final Class<?> type;
@@ -14,14 +12,11 @@ class RuleParameter {
 		this.optional = optional;
 	}
 	
-	boolean isResultHolder() {
-		return Result.class.equals(type);
+	public boolean isResultParameter() {
+		return false;
 	}
 	
-	Object resolve(ValueResolver valueResolver) throws MissingValueException {
-		if (isResultHolder())
-			throw new AssertionError();
-		
+	public Object resolve(ValueResolver valueResolver) throws MissingValueException {
 		Object value = valueResolver.lookup(accessPath);
 		
 		if (value == null)
