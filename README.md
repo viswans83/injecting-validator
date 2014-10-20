@@ -48,11 +48,14 @@ fail.
 **Build the RuleSet object that will be passed into a Validator**
 
 ````java
+// Include all the rules defined in a class
+RuleSet ssnRules = RuleSet.from(SSNRules.class).build();
+
 // Keep just the two rules
-RuleSet ssnRules1 = RuleSet.from(SSNRules.class).keep("ssn_required", "ssn_length");
+RuleSet ssnRules1 = RuleSet.from(SSNRules.class).keep("ssn_required", "ssn_length").build();
 
 // Keep all rules except the one
-RuleSet ssnRules2 = RuleSet.from(SSNRules.class).remove("ssn_unique");
+RuleSet ssnRules2 = RuleSet.from(SSNRules.class).remove("ssn_unique").build();
 ````
 
 
@@ -80,6 +83,8 @@ RuleFailureHandler results = createResultHolder();
 validator.runRules(dependencyResolver, valueResolver, results);
 
 // Check for rule failures in the results object
+// in an application specifc manner
+
 ````
 
 The framework uses the supplied `DependencyResolver` to obtain an instances of the rule class. You
@@ -89,9 +94,12 @@ fully injected instance (Guice for example).
 A single instance of the rule class is obtained, after which the framework will execute every rule
 method contained in the `RuleSet` used when create the `Validator` instance. In order to supply
 parameters for your rule methods, the framework utilizes the provided `ValueResolver` asking it to
-return the value at the parameters access path (value of the `@Path` annotation).  Rule parameters
-*not* marked with `@Optional` for which the value resolver cannot lookup a value (the lookup returns
-null) are automatically skipped.
+return the value at the parameters access path (value of the `@Path` annotation).  Rules (methods) 
+that have parameters *not* marked with `@Optional` for which the value resolver cannot lookup a value 
+(the lookup returns null) are automatically skipped.
 
 When the code in your rule methods invoke `fail` on the `Result` instance, the framework notifies
 the `RuleFailureHandler`, passing it the ruleId along with the remaining parameters.
+
+Since the result object is just anything that implements the `Result` interface, you have the 
+flexibility to intepret rule failures however your application needs to.
