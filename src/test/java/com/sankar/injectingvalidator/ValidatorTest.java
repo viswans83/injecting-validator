@@ -67,6 +67,41 @@ public class ValidatorTest {
 		Assert.assertTrue(results.gotFailure("rule_without_id"));
 	}
 	
+	@Test
+	public void ruleSet_keeps_correctly() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		Person person = new Person();
+		person.setName("Sankaranarayanan Viswanathan Narayanaswamy");
+		
+		RuleSet personruleSet = RuleSet.from(PersonRules.class).keep("name_length").build();
+		ValueResolver valueResolver = createValueResolver(person, false);
+		
+		Validator validator = new Validator(personruleSet);
+		validator.runRules(dependencyResolver, valueResolver, results);
+		
+		Assert.assertEquals(1, results.failureCount());
+		Assert.assertTrue(results.gotFailure("name_length"));
+	}
+	
+	@Test
+	public void ruleSet_removes_correctly() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		Person person = new Person();
+		person.setName("Sankaranarayanan Viswanathan Narayanaswamy");
+		
+		List<String> otherNames = Arrays.asList("Sankar", "Shankar", "Sankar V", "Sankaranarayanan Viswanathan Narayanaswamy");
+		person.setAlternateNames(otherNames);
+		
+		RuleSet personruleSet = RuleSet.from(PersonRules.class).remove("name_length", "alternate_names_not_different").build();
+		ValueResolver valueResolver = createValueResolver(person, false);
+		
+		Validator validator = new Validator(personruleSet);
+		validator.runRules(dependencyResolver, valueResolver, results);
+		
+		Assert.assertEquals(2, results.failureCount());
+		Assert.assertTrue(results.gotFailure("ssn_required"));
+		Assert.assertTrue(results.gotFailure("max_alternate_names"));
+	}
+	
+	
 	private DependencyResolver createDependencyResolver() {
 		
 		return new DependencyResolver() {
