@@ -48,7 +48,7 @@ public class ValidatorTest {
 	public void all_validations_pass() {
 		Object object = new Object();
 		
-		RuleSet rules = testruleSet.modify().keeping("generic_type").build();
+		RuleSet rules = testruleSet.modify().keeping("passing_rule").build();
 		ValueResolver valueResolver = createValueResolver(object, false);
 		
 		Validator validator = new Validator(rules);
@@ -178,6 +178,11 @@ public class ValidatorTest {
 }
 
 class TestRules {
+	
+	@Rule("passing_rule")
+	public void test_passing_rule(Result result) {
+		
+	}
 	
 	@Rule("generic_type")
 	public void test_rule(@Path("test") List<String> names, Result result) {
