@@ -59,5 +59,12 @@ public class PersonRules {
 		if (names.size() > 2)
 			result.fail("Only {0} alternate names can be provided", 2);
 	}
+	
+	@Rule("street_address_length")
+	@Path("address")
+	public void validate_address_streets(@Path("street1") String street1, @Path("street2") String street2, Result result) {
+		if (street1.length() > 30 || street2.length() > 30)
+			result.fail("Address lines can be a maximum of {0} characters long", 30);
+	}
 
 }

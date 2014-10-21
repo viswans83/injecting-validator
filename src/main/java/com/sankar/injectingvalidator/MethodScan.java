@@ -11,7 +11,7 @@ class MethodScan {
 	
 	private ClassScan classScan;
 	private Method method;
-	
+	private String pathPrefix;
 	private List<Parameter> parameters = new ArrayList<>();
 	
 	private boolean resultParameterFound;
@@ -20,8 +20,21 @@ class MethodScan {
 	public MethodScan(ClassScan classScan, Method m) {
 		this.classScan = classScan;
 		this.method = m;
+		
+		handlePathOnMethod();
 	}
 	
+	private void handlePathOnMethod() {
+		if (method.isAnnotationPresent(Path.class)) {
+			pathPrefix = method.getAnnotation(Path.class).value();
+			
+			if (pathPrefix.trim().length() == 0)
+				RuleSetBuilder.fail("Invalid access path on rule [{0}]", classScan.getCurrentRuleId());
+			
+			classScan.setCurrentRulePathPrefix(pathPrefix);
+		}
+	}
+
 	void ruleParameterFound(String path, Class<?> type, Type genericType, boolean optional) {
 		if (path.trim().length() == 0)
 			RuleSetBuilder.fail("Invalid access path [%s] found in ruleId [%s]", path, classScan.getCurrentRuleId());

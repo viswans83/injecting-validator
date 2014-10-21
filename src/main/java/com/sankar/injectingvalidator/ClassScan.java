@@ -11,6 +11,7 @@ class ClassScan {
 	
 	private Set<String> ruleIds = new HashSet<>();
 	private String currentRuleId;
+	private String pathPrefix;
 	
 	ClassScan(Class<?> ruleSetClass) {
 		this.ruleSetClass = ruleSetClass;
@@ -33,14 +34,19 @@ class ClassScan {
 			ruleIds.add(ruleId);
 		
 		currentRuleId = ruleId;
+		pathPrefix = null;
+	}
+	
+	void setCurrentRulePathPrefix(String pathPrefix) {
+		this.pathPrefix = pathPrefix;
 	}
 	
 	void buildCurrentRule(Parameter[] parameters, Method method) {
-		addRule(currentRuleId, parameters, method);
+		addRule(currentRuleId, parameters, method, pathPrefix);
 	}
 	
-	private void addRule(String ruleId, Parameter[] parameters, Method method) {
-		scannedRules.add(new RuleDefinition(ruleId, parameters, method));
+	private void addRule(String ruleId, Parameter[] parameters, Method method, String pathPrefix) {
+		scannedRules.add(new RuleDefinition(ruleId, pathPrefix, parameters, method));
 	}
 	
 	Class<?> getRuleSetClass() {
@@ -49,6 +55,6 @@ class ClassScan {
 	
 	Set<RuleDefinition> getScannedRules() {
 		return scannedRules;
-	}
+	}	
 	
 }

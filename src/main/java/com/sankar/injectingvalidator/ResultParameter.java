@@ -16,4 +16,9 @@ class ResultParameter implements Parameter {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public Object resolveRelative(String pathPrefix, ValueResolver valueResolver) {
+		throw new UnsupportedOperationException();
+	}
+
 }

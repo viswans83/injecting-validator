@@ -23,6 +23,17 @@ class RuleParameter implements Parameter {
 	public Object resolve(ValueResolver valueResolver) throws MissingValueException, UnmatchedTypeException {
 		Object value = valueResolver.lookup(accessPath, type, genericType);
 		
+		return checkAndReturn(value);
+	}	
+
+	@Override
+	public Object resolveRelative(String pathPrefix, ValueResolver valueResolver) throws MissingValueException, UnmatchedTypeException {
+		Object value = valueResolver.lookup(pathPrefix, accessPath, type, genericType);
+		
+		return checkAndReturn(value);
+	}
+	
+	private Object checkAndReturn(Object value) throws MissingValueException {
 		if (value == null)
 			if (optional)
 				return null;

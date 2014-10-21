@@ -7,6 +7,7 @@ public class Person {
 	private String name;
 	private String ssn;
 	private List<String> alternateNames;
+	private Address address;
 	
 	public String getName() {
 		return name;
@@ -30,6 +31,14 @@ public class Person {
 
 	public void setAlternateNames(List<String> alternateNames) {
 		this.alternateNames = alternateNames;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 	
 }

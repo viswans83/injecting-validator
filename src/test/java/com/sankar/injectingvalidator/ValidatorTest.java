@@ -1,6 +1,5 @@
 package com.sankar.injectingvalidator;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
@@ -11,6 +10,7 @@ import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.sankar.injectingvalidator.helpers.Address;
 import com.sankar.injectingvalidator.helpers.Person;
 import com.sankar.injectingvalidator.helpers.PersonRules;
 import com.sankar.injectingvalidator.helpers.SSNModule;
@@ -25,7 +25,7 @@ public class ValidatorTest {
 	DependencyResolver dependencyResolver = createDependencyResolver();
 	
 	@Test
-	public void validates_correctly() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public void validates_correctly() {
 		Person person = new Person();
 		person.setName("Sankaranarayanan Viswanathan Narayanaswamy");
 		
@@ -45,7 +45,7 @@ public class ValidatorTest {
 	}
 	
 	@Test(expected = ValidationExecutionException.class)
-	public void test_UnmatchedTypeException() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public void test_UnmatchedTypeException() {
 		Object object = new Object();
 		
 		ValueResolver valueResolver = createValueResolver(object, true);
@@ -55,7 +55,7 @@ public class ValidatorTest {
 	}
 	
 	@Test
-	public void test_custom_ruleId() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public void test_custom_ruleId() {
 		Object object = new Object();
 		
 		ValueResolver valueResolver = createValueResolver(object, false);
@@ -68,7 +68,7 @@ public class ValidatorTest {
 	}
 	
 	@Test
-	public void ruleSet_keeps_correctly() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public void ruleSet_keeps_correctly() {
 		Person person = new Person();
 		person.setName("Sankaranarayanan Viswanathan Narayanaswamy");
 		
@@ -83,7 +83,7 @@ public class ValidatorTest {
 	}
 	
 	@Test
-	public void ruleSet_removes_correctly() throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public void ruleSet_removes_correctly() {
 		Person person = new Person();
 		person.setName("Sankaranarayanan Viswanathan Narayanaswamy");
 		
@@ -99,6 +99,25 @@ public class ValidatorTest {
 		Assert.assertEquals(2, results.failureCount());
 		Assert.assertTrue(results.gotFailure("ssn_required"));
 		Assert.assertTrue(results.gotFailure("max_alternate_names"));
+	}
+	
+	@Test
+	public void resolves_relative_paths() {
+		Address address = new Address();
+		address.setStreet1("1 Testing Drive (near California blvd)");
+		address.setStreet2("Route 10 N");
+		
+		Person person = new Person();
+		person.setAddress(address);
+		
+		RuleSet rules = personruleSet.modify().keeping("street_address_length").build();
+		ValueResolver valueResolver = createValueResolver(person, false);
+		
+		Validator validator = new Validator(rules);
+		validator.runRules(dependencyResolver, valueResolver, results);
+		
+		Assert.assertEquals(1, results.failureCount());
+		Assert.assertTrue(results.gotFailure("street_address_length"));
 	}
 	
 	
@@ -129,9 +148,17 @@ public class ValidatorTest {
 					else
 						return PropertyUtils.getNestedProperty(context, path);
 					
-				} catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+				} catch (UnmatchedTypeException e) {
+					throw e;
+				} catch (Exception e) {
 					return null;
 				}
+			}
+
+			@Override
+			public Object lookup(String pathPrefix, String path, Class<?> type, Type genericType) throws UnmatchedTypeException {
+				String completePath = pathPrefix + "." + path;
+				return lookup(completePath, type, genericType);
 			}
 			
 		};

@@ -55,9 +55,10 @@ class RuleMethodArgumentInfo {
 	private void ensureValidRuleParameterAnnotations() {
 		for(Annotation a : annotations)
 			if (Path.class.equals(a.annotationType()))
-				return;
+				if (getPathAnnotation().value().trim().length() > 0)
+					return;
 		
-		RuleSetBuilder.fail("Rule parameters should be annotated with @Path");
+		RuleSetBuilder.fail("Rule parameters should be annotated with @Path containing a valid access path");
 	}
 	
 	private Path getPathAnnotation() {

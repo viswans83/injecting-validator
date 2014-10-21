@@ -6,11 +6,13 @@ import java.lang.reflect.Method;
 class RuleDefinition {
 	
 	private final String ruleId;
+	private final String pathPrefix;
 	private final Parameter[] parameters;
 	private final Method method;
 	
-	public RuleDefinition(String ruleId, Parameter[] parameters, Method method) {
+	public RuleDefinition(String ruleId, String pathPrefix, Parameter[] parameters, Method method) {
 		this.ruleId = ruleId;
+		this.pathPrefix = pathPrefix;
 		this.parameters = parameters;
 		this.method = method;
 	}
@@ -42,7 +44,9 @@ class RuleDefinition {
 	}
 
 	private Object resolveParameter(int i, ValueResolver valueResolver) throws MissingValueException, UnmatchedTypeException {
-		return parameters[i].resolve(valueResolver);
+		return pathPrefix == null ? 
+				parameters[i].resolve(valueResolver) :
+					parameters[i].resolveRelative(pathPrefix, valueResolver);
 	}
 
 	private Result buildResultProxy(final RuleFailureHandler handler) {
