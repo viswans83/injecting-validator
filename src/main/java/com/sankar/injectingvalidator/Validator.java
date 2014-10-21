@@ -4,17 +4,19 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Validator {
 	
-	private RuleSet ruleSet;
+	private RuleSet[] ruleSets;
 	
-	public Validator(RuleSet ruleSet) {
-		this.ruleSet = ruleSet;
+	public Validator(RuleSet... ruleSets) {
+		this.ruleSets = ruleSets;
 	}
 	
 	public void runRules(DependencyResolver dependencyResolver, ValueResolver valueResolver, RuleFailureHandler handler) {
-		try {
-			ruleSet.execute(dependencyResolver, valueResolver, handler);
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | UnmatchedTypeException e) {
-			throw new ValidationExecutionException(e);
+		for (RuleSet ruleSet : ruleSets) {
+			try {
+				ruleSet.execute(dependencyResolver, valueResolver, handler);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | UnmatchedTypeException e) {
+				throw new ValidationExecutionException(e);
+			}
 		}
 	}
 

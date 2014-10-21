@@ -15,7 +15,7 @@ public class UnfinishedRuleSetBuilder {
 		this.rules = rules;
 	}
 	
-	public UnfinishedRuleSetBuilder keep(String... ruleIds) {
+	public UnfinishedRuleSetBuilder keeping(String... ruleIds) {
 		Set<RuleDefinition> filtered = new HashSet<>();
 		
 		Map<String, RuleDefinition> ruleMap = map();
@@ -27,7 +27,7 @@ public class UnfinishedRuleSetBuilder {
 		return this;
 	}
 	
-	public UnfinishedRuleSetBuilder remove(String... ruleIds) {
+	public UnfinishedRuleSetBuilder removing(String... ruleIds) {
 		Map<String, RuleDefinition> ruleMap = map();
 		
 		for(String rule : ruleIds) {

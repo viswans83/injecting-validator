@@ -37,7 +37,7 @@ public class SSNRules {
 }
 ````
 
-Any `public void` method annotated with `@Rule` is considered as validation rule. Rule methods have
+Any `public void` method annotated with `@Rule` is considered a validation rule. Rule methods have
 inputs (arguments) annotated with `@Path` and `@Optional`. The framework supplies parameters that
 the rule methods require to execute. A Rule method must also have a single argument `Result`
 argument, which is supplied by the framework. This object allows you to signal rule failures.  Use
@@ -52,17 +52,17 @@ fail.
 RuleSet ssnRules = RuleSet.from(SSNRules.class).build();
 
 // Keep just the two rules
-RuleSet ssnRules1 = RuleSet.from(SSNRules.class).keep("ssn_required", "ssn_length").build();
+RuleSet ssnRules1 = RuleSet.from(SSNRules.class).keeping("ssn_required", "ssn_length").build();
 
 // Keep all rules except the one
-RuleSet ssnRules2 = RuleSet.from(SSNRules.class).remove("ssn_unique").build();
+RuleSet ssnRules2 = RuleSet.from(SSNRules.class).removing("ssn_unique").build();
 ````
 
 
 **Build a Validator instance**
 
 ````java
-Validator validator = new Validator(ssnRules1);
+Validator validator = new Validator(ssnRules1, ssnRules2);
 ````
 
 
@@ -83,8 +83,7 @@ RuleFailureHandler results = createResultHolder();
 validator.runRules(dependencyResolver, valueResolver, results);
 
 // Check for rule failures in the results object
-// in an application specifc manner
-
+// in an application specific manner
 ````
 
 The framework uses the supplied `DependencyResolver` to obtain an instances of the rule class. You
@@ -92,7 +91,7 @@ could have an implementation that *injects* dependencies required by your rule c
 fully injected instance (Guice for example).
 
 A single instance of the rule class is obtained, after which the framework will execute every rule
-method contained in the `RuleSet` used when create the `Validator` instance. In order to supply
+method contained in the `RuleSet` used while creating the `Validator` instance. In order to supply
 parameters for your rule methods, the framework utilizes the provided `ValueResolver` asking it to
 return the value at the parameters access path (value of the `@Path` annotation).  Rules (methods) 
 that have parameters *not* marked with `@Optional` for which the value resolver cannot lookup a value 
@@ -102,4 +101,4 @@ When the code in your rule methods invoke `fail` on the `Result` instance, the f
 the `RuleFailureHandler`, passing it the ruleId along with the remaining parameters.
 
 Since the result object is just anything that implements the `Result` interface, you have the 
-flexibility to intepret rule failures however your application needs to.
+flexibility to interpret rule failures however your application needs to.

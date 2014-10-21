@@ -72,7 +72,7 @@ public class ValidatorTest {
 		Person person = new Person();
 		person.setName("Sankaranarayanan Viswanathan Narayanaswamy");
 		
-		RuleSet personruleSet = RuleSet.from(PersonRules.class).keep("name_length").build();
+		RuleSet personruleSet = RuleSet.from(PersonRules.class).keeping("name_length").build();
 		ValueResolver valueResolver = createValueResolver(person, false);
 		
 		Validator validator = new Validator(personruleSet);
@@ -90,7 +90,7 @@ public class ValidatorTest {
 		List<String> otherNames = Arrays.asList("Sankar", "Shankar", "Sankar V", "Sankaranarayanan Viswanathan Narayanaswamy");
 		person.setAlternateNames(otherNames);
 		
-		RuleSet personruleSet = RuleSet.from(PersonRules.class).remove("name_length", "alternate_names_not_different").build();
+		RuleSet personruleSet = RuleSet.from(PersonRules.class).removing("name_length", "alternate_names_not_different").build();
 		ValueResolver valueResolver = createValueResolver(person, false);
 		
 		Validator validator = new Validator(personruleSet);

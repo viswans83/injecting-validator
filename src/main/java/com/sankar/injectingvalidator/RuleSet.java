@@ -13,6 +13,10 @@ public class RuleSet {
 		this.rules = rules;
 	}
 	
+	public UnfinishedRuleSetBuilder modify() {
+		return new UnfinishedRuleSetBuilder(ruleClass, rules);
+	}
+	
 	public static UnfinishedRuleSetBuilder from(Class<?> clazz) {
 		return new RuleSetBuilder().scan(clazz);
 	}
