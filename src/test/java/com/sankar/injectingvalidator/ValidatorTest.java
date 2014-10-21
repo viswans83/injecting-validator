@@ -44,6 +44,17 @@ public class ValidatorTest {
 		Assert.assertTrue(results.gotFailure("alternate_names_not_different"));
 	}
 	
+	@Test
+	public void all_validations_pass() {
+		Object object = new Object();
+		
+		RuleSet rules = testruleSet.modify().keeping("generic_type").build();
+		ValueResolver valueResolver = createValueResolver(object, false);
+		
+		Validator validator = new Validator(rules);
+		validator.runRules(dependencyResolver, valueResolver, results);
+	}
+	
 	@Test(expected = ValidationExecutionException.class)
 	public void test_UnmatchedTypeException() {
 		Object object = new Object();
